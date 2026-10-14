@@ -1,6 +1,6 @@
 # ParentPack pilot site: design plan (Stop 1)
 
-Status: proposal for review. Nothing is built yet.
+Status: approved at Stop 1 ("Go plum") and built in Stop 2. Updated to match the build.
 
 ## 1. The idea in one line
 
@@ -20,17 +20,18 @@ Preview of the sky's first and last frames, day and night (a plan mockup, not th
 | `--surface` | `#EAE5F2` | `#262131` | Help Now panel only |
 | `--rule` | `#D5CFE0` | `#3A3448` | Hairline dividers (decorative) |
 | `--accent` | `#F0A97C` apricot | `#E3A46A` amber | Fills and highlights only, never text |
-| `--button` | `#3D3350` plum | `#E3A46A` amber | Primary button fill |
-| `--button-text` | `#FFFFFF` | `#1B1923` | Primary button label |
+| `--button` | `#3D3350` plum | `#3D3350` plum | Primary button fill |
+| `--button-text` | `#FFFFFF` | `#ECE7F2` | Primary button label |
+| `--button-edge` | `#3D3350` | `#8E80AE` light plum | Button outline (keeps the night button visible) |
 | `--focus` | `#3D3350` | `#E3A46A` | Focus ring, link underline |
 
 Kept exactly from the brief: background, text, secondary, and apricot (day), plus background, text, and amber (night).
-Changed: the night button is amber with dark text, not plum (see section 8, item 3).
-Added: night secondary text, surface, rule, and focus.
+Decided (Erick, Stop 1 review): the night button stays plum. A lighter plum edge (`#8E80AE`) keeps its shape visible at night, since plum fill alone is 1.48:1 against the night background.
+Added: night secondary text, surface, rule, focus, and button edge.
 
 ### Contrast ratios
 
-Computed with the WCAG 2.2 relative-luminance formula. In Stop 2 the script is committed as `scripts/contrast.mjs`. In Stop 3 it re-checks the real CSS.
+Computed with the WCAG 2.2 relative-luminance formula by `npm run contrast` (`scripts/contrast.mjs`), which reads the tokens from `app/globals.css`. Updated in Stop 2 for the plum night button.
 
 | Pair | Day | Night | Needs |
 | --- | --- | --- | --- |
@@ -38,13 +39,13 @@ Computed with the WCAG 2.2 relative-luminance formula. In Stop 2 the script is c
 | Secondary text on background | 6.52 | 7.37 | 4.5 |
 | Text on Help Now panel | 11.25 | 12.85 | 4.5 |
 | Secondary text on Help Now panel | 5.86 | 6.63 | 4.5 |
-| Button label on button | 11.75 | 8.09 | 4.5 |
-| Button shape against background (non-text) | 10.57 | 8.09 | 3 |
+| Button label on button | 11.75 | 9.67 | 4.5 |
+| Button edge against background (non-text) | 10.57 | 4.83 | 3 |
 | Focus ring against background (non-text) | 10.57 | 8.09 | 3 |
 | Focus ring against Help Now panel (non-text) | 9.50 | 7.28 | 3 |
 | Step numerals and keyword on accent fill | 7.06 | 8.09 | 4.5 |
 | Hero text, worst frame of the sunrise | 6.32 | 12.98 | 4.5 |
-| Button shape against the sky, worst frame | 6.44 | 7.35 | 3 |
+| Button edge against the sky, worst frame | 5.34 | 4.37 | 3 |
 
 All pass. Each hero row checks every 5% step of the animation, from the first frame to the last. For reference, apricot against the day background is 1.77:1. That is why apricot is never text and never the focus ring.
 
@@ -63,18 +64,18 @@ Family: **Atkinson Hyperlegible Next**, loaded with `next/font/google`.
 | Hero headline (H1) | 40px | 72px | 800 | 1.05, tracking −0.015em | `clamp(2.5rem, 1.833rem + 2.963vw, 4.5rem)` |
 | Section heading (H2) | 28px | 36px | 700 | 1.2 | `clamp(1.75rem, 1.583rem + 0.741vw, 2.25rem)` |
 | Hero subhead | 20px | 24px | 400 | 1.45 | `clamp(1.25rem, 1.167rem + 0.37vw, 1.5rem)` |
-| Body | 18px | 20px | 400 | 1.65 | `clamp(1.125rem, 1.083rem + 0.185vw, 1.25rem)` |
+| Body | 18px | 20px (from 560px wide) | 400 | 1.65 | `clamp(1.125rem, 0.9rem + 1vw, 1.25rem)` |
 | Small lines | 16px | 16px | 400 | 1.5 | `1rem`, the floor; nothing on the site is smaller |
 | Buttons and Help Now links | 18px | 18px | 700 | 1.2 | `1.125rem` |
 | Wordmark | 20px | 22px | 800 | 1 | `clamp(1.25rem, 1.208rem + 0.185vw, 1.375rem)` |
 
-- **Line length:** the column is at most 40rem (640px). That gives about 58–62 characters per line at 20px on desktop and about 36–40 on a 390px phone. Both stay under 70. Stop 3 measures it in the browser.
+- **Line length:** the column is at most 36rem (576px). Measured in the browser in Stop 2, the longest line is 39 characters at 320px, 47 at 390px, 66 at 768px, and 66 at 1440px. (The first plan said 40rem; measured, that gave 73 characters at 1440px, over the limit.)
 - **Phone numbers** never break across lines.
 - **Headings** are sentence case: Who it's for, How it works, What it is not, Need help now?, Your privacy, Questions, Ready?
 
 ## 4. Layout and spacing
 
-- **One centered column:** `width: min(100% − 2 × gutter, 40rem)`. The header, hero text, every section, and the footer share the same left edge. Text is left-aligned everywhere.
+- **One centered column:** `width: min(100% − 2 × gutter, 36rem)`. The header, hero text, every section, and the footer share the same left edge. Text is left-aligned everywhere.
 - **Gutters:** `max(1.25rem, env(safe-area-inset-left/right))`. This protects text from the curved edges of a landscape iPhone.
 - **Safe areas:** the page uses `viewport-fit=cover`. The header's top padding is `max(1rem, env(safe-area-inset-top))` and the footer's bottom padding is `max(2rem, env(safe-area-inset-bottom))`.
 - **Rhythm:** 4px base. Sections sit `clamp(4rem, 3.25rem + 3.33vw, 6rem)` apart. Paragraphs are spaced 1em apart.
@@ -121,8 +122,8 @@ Family: **Atkinson Hyperlegible Next**, loaded with `next/font/google`.
 1. **Two layers, both CSS gradients:**
    - The base layer is the pre-dawn sky. Day: `#B4AACB → #C3B7D3 → #D3C5D6`. Night: `#0F0D16 → #15121F → #1B1923`.
    - A `::before` overlay holds the first-light sky. Day: `#E4DEF0 → #ECE7F5 → #F2EEF7`. Night: `#1E1A2B → #241F31 → #2A2233`.
-2. **The horizon band** lives only in a reserved strip at the bottom of the hero, `clamp(8rem, 22svh, 16rem)` tall, below all the text.
-   - Day: apricot light rising from the bottom edge, strongest 28% from the left.
+2. **The horizon band** lives only in a reserved strip at the bottom of the hero, `clamp(7rem, 20svh, 15rem)` tall, below all the text and a breathing gap.
+   - Day: apricot light rising from the bottom edge, strongest near the start of the text column (28% from the left on phones).
    - Night: rose-mauve with a faint amber point.
    - Text can never sit on it.
 3. **On load,** the overlay fades from invisible to fully visible, once: a 0.3s delay, then 2.8s, slowing at the end.
@@ -314,7 +315,7 @@ v1 means my first-pass decisions, before I checked them against the section 5 av
 | --- | --- | --- | --- |
 | 1 | Secondary text (`#5A536E`) for the small line under the hero button | 3.30:1 on the first sunrise frame (needs 4.5) | All hero text uses `--text`. Worst frame: 6.32:1 |
 | 2 | Apricot focus ring | 1.77:1 against the page (needs 3) | Plum ring by day (10.57), amber at night (8.09) |
-| 3 | Plum button in both modes, as the brief implies | At night, plum on `#1B1923` is 1.48:1, so the button nearly disappears | Night button is an amber "lamp" with dark text (8.09). **This departs from the brief; your call.** |
+| 3 | Plum button in both modes, as the brief implies | At night, plum on `#1B1923` is 1.48:1, so the button nearly disappears | Proposed amber; Erick chose plum. Built as plum with a lighter plum edge (4.83:1) |
 | 4 | First light drawn as a soft round glow behind the content | Rendered, it read as the blurry orb generic AI sites use; at night, a brown smudge | A horizon band rising from the bottom edge, in its own strip below the text. Compared three versions in renders; this one reads as a real sunrise |
 | 5 | Help Now as six stacked rounded boxes | "No rows of identical rounded boxes" | One panel, hairline rows, text links |
 | 6 | Help Now entries numbered 1–6, as the brief lists them | Numbered markers are allowed only for the three steps | Unnumbered |
