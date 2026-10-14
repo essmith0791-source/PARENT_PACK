@@ -1,1 +1,430 @@
 @import "tailwindcss";
+
+/* ── Design tokens ──────────────────────────────────────────────────────
+   Day is the default. Night applies when the phone is in dark mode
+   (unless the visitor picked Day) or when the visitor picked Night.
+   The two night blocks must stay identical: scripts/contrast.mjs checks.
+   Rationale and contrast ratios: docs/design-plan.md. */
+
+:root {
+  color-scheme: light;
+  --bg: #F4F2F8;
+  --text: #2E2A3B;
+  --text-2: #5A536E;
+  --surface: #EAE5F2;
+  --rule: #D5CFE0;
+  --accent: #F0A97C;
+  --on-accent: #2E2A3B;
+  --button: #3D3350;
+  --on-button: #FFFFFF;
+  --button-edge: #3D3350;
+  --focus: #3D3350;
+  --sky-pre-top: #B4AACB;
+  --sky-pre-mid: #C3B7D3;
+  --sky-pre-bottom: #D3C5D6;
+  --sky-first-top: #E4DEF0;
+  --sky-first-mid: #ECE7F5;
+  --sky-first-bottom: #F2EEF7;
+  --sun: 240 169 124;
+  --sun-alpha: 0.65;
+  --glow: 243 196 165;
+  --glow-alpha: 0.75;
+
+  --gutter: max(1.25rem, env(safe-area-inset-left), env(safe-area-inset-right));
+  --section-gap: clamp(4rem, 3.25rem + 3.33vw, 6rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="day"]) {
+    color-scheme: dark;
+    --bg: #1B1923;
+    --text: #ECE7F2;
+    --text-2: #ADA5BF;
+    --surface: #262131;
+    --rule: #3A3448;
+    --accent: #E3A46A;
+    --on-accent: #1B1923;
+    --button: #3D3350;
+    --on-button: #ECE7F2;
+    --button-edge: #8E80AE;
+    --focus: #E3A46A;
+    --sky-pre-top: #0F0D16;
+    --sky-pre-mid: #15121F;
+    --sky-pre-bottom: #1B1923;
+    --sky-first-top: #1E1A2B;
+    --sky-first-mid: #241F31;
+    --sky-first-bottom: #2A2233;
+    --sun: 227 164 106;
+    --sun-alpha: 0.3;
+    --glow: 122 78 86;
+    --glow-alpha: 0.55;
+  }
+}
+
+:root[data-theme="night"] {
+  color-scheme: dark;
+  --bg: #1B1923;
+  --text: #ECE7F2;
+  --text-2: #ADA5BF;
+  --surface: #262131;
+  --rule: #3A3448;
+  --accent: #E3A46A;
+  --on-accent: #1B1923;
+  --button: #3D3350;
+  --on-button: #ECE7F2;
+  --button-edge: #8E80AE;
+  --focus: #E3A46A;
+  --sky-pre-top: #0F0D16;
+  --sky-pre-mid: #15121F;
+  --sky-pre-bottom: #1B1923;
+  --sky-first-top: #1E1A2B;
+  --sky-first-mid: #241F31;
+  --sky-first-bottom: #2A2233;
+  --sun: 227 164 106;
+  --sun-alpha: 0.3;
+  --glow: 122 78 86;
+  --glow-alpha: 0.55;
+}
+
+/* ── Tailwind theme: only our colors and type sizes exist ─────────────── */
+
+@theme {
+  --color-*: initial;
+  --text-*: initial;
+
+  --text-display: clamp(2.5rem, 1.833rem + 2.963vw, 4.5rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.015em;
+  --text-h2: clamp(1.75rem, 1.583rem + 0.741vw, 2.25rem);
+  --text-h2--line-height: 1.2;
+  --text-lead: clamp(1.25rem, 1.167rem + 0.37vw, 1.5rem);
+  --text-lead--line-height: 1.45;
+  --text-body: clamp(1.125rem, 0.9rem + 1vw, 1.25rem); /* 18px on phones, 20px from 560px wide */
+  --text-body--line-height: 1.65;
+  --text-small: 1rem; /* The floor. Nothing on the site is smaller. */
+  --text-small--line-height: 1.5;
+  --text-ui: 1.125rem;
+  --text-ui--line-height: 1.2;
+  --text-wordmark: clamp(1.25rem, 1.208rem + 0.185vw, 1.375rem);
+  --text-wordmark--line-height: 1;
+}
+
+@theme inline {
+  --color-page: var(--bg);
+  --color-ink: var(--text);
+  --color-ink-soft: var(--text-2);
+  --color-surface: var(--surface);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-button: var(--button);
+  --color-on-button: var(--on-button);
+  --color-focus: var(--focus);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  body {
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: var(--focus);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+
+  mark {
+    padding: 0.05em 0.3em;
+    border-radius: 0.3em;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-weight: 800;
+  }
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────── */
+
+@layer components {
+  .column {
+    width: min(100% - 2 * var(--gutter), 36rem);
+    margin-inline: auto;
+  }
+
+  .section {
+    margin-top: var(--section-gap);
+    scroll-margin-top: 1.5rem;
+  }
+
+  .site-header {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    z-index: 1;
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+  }
+
+  /* ── The dawn hero ──────────────────────────────────────────────────
+     Base layer: the pre-dawn sky. ::before: first light, plus the warm
+     horizon band in a reserved strip below all the text. On load the
+     overlay fades in once. Only opacity animates; text never moves. */
+
+  .hero {
+    --horizon-h: clamp(7rem, 20svh, 15rem);
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: min(80svh, 56rem);
+    padding-top: calc(max(0.75rem, env(safe-area-inset-top)) + 2.75rem + clamp(2.5rem, 1.5rem + 4vw, 5rem));
+    background: linear-gradient(180deg, var(--sky-pre-top) 0%, var(--sky-pre-mid) 50%, var(--sky-pre-bottom) 100%);
+  }
+
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(70% 100% at max(28%, 50% - 16rem) 100%, rgb(var(--sun) / var(--sun-alpha)) 0%, rgb(var(--sun) / 0) 75%) bottom / 100% var(--horizon-h) no-repeat,
+      linear-gradient(0deg, rgb(var(--glow) / var(--glow-alpha)) 0%, rgb(var(--glow) / 0) 100%) bottom / 100% var(--horizon-h) no-repeat,
+      linear-gradient(180deg, var(--sky-first-top) 0%, var(--sky-first-mid) 55%, var(--sky-first-bottom) 100%);
+    opacity: 0;
+    animation: first-light 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) 0.3s forwards;
+  }
+
+  .hero-static::before {
+    animation: none;
+    opacity: 1;
+  }
+
+  .hero > .column {
+    padding-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+  }
+
+  .horizon {
+    flex: 0 0 var(--horizon-h);
+    margin-top: auto;
+  }
+
+  /* ── Buttons and links ──────────────────────────────────────────── */
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.5rem;
+    padding: 0.75rem 2rem;
+    border: 2px solid var(--button-edge);
+    border-radius: 999px;
+    background: var(--button);
+    color: var(--on-button);
+    font-size: var(--text-ui);
+    line-height: var(--text-ui--line-height);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .button:hover {
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (max-width: 30rem) {
+    .button {
+      width: 100%;
+    }
+  }
+
+  /* ── How it works ───────────────────────────────────────────────── */
+
+  .step-number {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 1.25rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .step-text {
+    padding-top: calc((2.75rem - 1lh) / 2);
+  }
+
+  /* ── Help Now: one panel, warm edge, hairline rows ──────────────── */
+
+  .help {
+    margin-top: 2.25rem;
+    padding: 1.5rem clamp(1.25rem, 0.75rem + 2vw, 2rem) 0.5rem;
+    border-left: 6px solid var(--accent);
+    border-radius: 0.375rem;
+    background: var(--surface);
+  }
+
+  .help-row {
+    padding-block: 0.875rem;
+  }
+
+  .help-row + .help-row {
+    border-top: 1px solid var(--rule);
+  }
+
+  .help-action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--text-ui);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* ── Questions: native <details> ────────────────────────────────── */
+
+  .faq details {
+    border-top: 1px solid var(--rule);
+  }
+
+  .faq details:last-child {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .faq summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    padding-block: 0.75rem;
+    font-weight: 700;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq summary::after {
+    content: "+";
+    content: "+" / "";
+    flex: none;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .faq details[open] > summary::after {
+    content: "\2212";
+    content: "\2212" / "";
+  }
+
+  .faq-answer {
+    padding-bottom: 1.25rem;
+  }
+
+  /* ── Footer and theme control ───────────────────────────────────── */
+
+  .site-footer {
+    margin-top: var(--section-gap);
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+  }
+
+  .footer-inner {
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  .theme {
+    margin-top: 1.5rem;
+  }
+
+  .theme legend {
+    margin-bottom: 0.5rem;
+    color: var(--text-2);
+    font-size: var(--text-small);
+  }
+
+  .theme-options {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+  }
+
+  .theme-option {
+    position: relative;
+  }
+
+  .theme-option input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .theme-option span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    border-radius: 999px;
+    font-size: var(--text-small);
+    font-weight: 700;
+  }
+
+  .theme-option input:checked + span {
+    background: var(--button);
+    color: var(--on-button);
+    box-shadow: inset 0 0 0 2px var(--button-edge);
+  }
+
+  .theme-option input:focus-visible + span {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes first-light {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: show the final frame immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
+    opacity: 1;
+  }
+}
