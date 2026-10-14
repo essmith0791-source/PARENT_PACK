@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "start": "node scripts/serve.mjs",
     "screenshots": "node scripts/screenshots.mjs",
-    "images": "node scripts/make-images.mjs"
+    "images": "node scripts/make-images.mjs",
+    "contrast": "node scripts/contrast.mjs"
   },
   "engines": {
     "node": ">=20.9"
