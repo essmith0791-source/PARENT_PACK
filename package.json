@@ -4,8 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "typecheck": "tsc --noEmit"
+    "build": "next build && node scripts/csp.mjs",
+    "typecheck": "tsc --noEmit",
+    "start": "node scripts/serve.mjs",
+    "screenshots": "node scripts/screenshots.mjs",
+    "images": "node scripts/make-images.mjs"
   },
   "engines": {
     "node": ">=20.9"
