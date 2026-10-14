@@ -330,10 +330,10 @@ v1 means my first-pass decisions, before I checked them against the section 5 av
 
 ## 9. Build notes that affect the design (for Stop 2)
 
-- **Security policy (CSP):** Next.js puts small inline scripts into every exported page. My plan:
-  - A build step fingerprints each inline script (a SHA-256 hash) and writes those hashes into the Content-Security-Policy in `vercel.json`.
-  - Stop 3 proves the page runs under that policy with zero violations.
-  - Catch: any copy change changes the fingerprints. `npm run build` regenerates them, so commit `vercel.json` together with any content change.
+- **Security policy (CSP):** Next.js puts small inline scripts into every exported page. As built in Stop 2, two policies apply and browsers enforce both:
+  - `vercel.json` (fixed) blocks every other domain for scripts, styles, images, fonts, and connections.
+  - `scripts/csp.mjs` writes a policy into each exported page that allows only that page's own inline scripts, by SHA-256 fingerprint. The same build writes the scripts and their fingerprints, so they match whether the site is built here or on Vercel.
+  - Why not fingerprints in `vercel.json` alone (the first plan): Next.js embeds a random build ID, the year, and the deployment address in those scripts, so a Vercel build would not match fingerprints computed locally.
 - **Text message link:** `sms:+15550100?&body=PACK`. Android reads the `?` part and iPhone reads the `&body=` part, so one link serves both. The link is built from `PILOT_PHONE` and `JOIN_KEYWORD` in `content/site.ts`.
   - A headless browser here can't open a Messages app, so the real tap test on each kind of phone stays "not tested" until you do it.
   - The placeholder `+1-555-0100` has no area code. The real number will need one. The link builder strips formatting, so any style of number works.
